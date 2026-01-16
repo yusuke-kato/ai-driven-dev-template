@@ -1,0 +1,69 @@
+# Bugfix Workflow
+# バグ修正ワークフロー
+
+name: bugfix
+description: "バグ修正の標準ワークフロー"
+
+trigger:
+  - "bugfix/* ブランチ作成"
+  - "バグ報告"
+
+steps:
+  - id: 1
+    name: "バグ分析"
+    agent: architect
+    action: |
+      - バグの再現手順確認
+      - 原因の特定
+      - 影響範囲の分析
+    output:
+      - 原因分析レポート
+      - 修正方針
+    next: 2
+
+  - id: 2
+    name: "修正実装"
+    agent: implementer
+    action: |
+      - バグ修正コード実装
+      - 回帰テスト作成
+    output:
+      - 修正コード
+      - 回帰テスト
+    next: 3
+
+  - id: 3
+    name: "レビュー"
+    agent: reviewer
+    action: |
+      - 修正内容のレビュー
+      - 副作用の確認
+    output:
+      - レビューコメント
+    decision:
+      approved: 4
+      rejected: 2
+
+  - id: 4
+    name: "テスト実行"
+    agent: tester
+    action: |
+      - 回帰テスト実行
+      - 既存テスト実行
+    output:
+      - テスト結果
+    decision:
+      passed: 5
+      failed: 2
+
+  - id: 5
+    name: "PR作成・人間承認"
+    agent: human
+    action: |
+      - PR確認
+      - 承認
+    output:
+      - 承認/却下
+    decision:
+      approved: "DONE"
+      feedback: 2

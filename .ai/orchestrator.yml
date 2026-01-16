@@ -1,0 +1,159 @@
+# AI Orchestrator Configuration
+# 2026年AI駆動開発パラダイム
+
+version: "1.0"
+project: your-project-name  # ← プロジェクト名に変更してください
+
+# =============================================================================
+# パラダイム宣言
+# =============================================================================
+paradigm:
+  human_role: "Orchestrator / 監督"
+  ai_role: "実行者（設計・実装・レビュー・テスト・デプロイ）"
+
+  human_responsibilities:
+    - intent_architect: "「なぜ作るか」の意図設計"
+    - security_gatekeeper: "脆弱性・倫理の最終判断"
+    - exception_handler: "AI間のループ・対立の調停"
+    - orchestrator: "AIを捌き、結果を監督"
+
+# =============================================================================
+# エージェント定義
+# =============================================================================
+agents:
+  architect:
+    description: "設計担当 - 全体アーキテクチャ、タスク分解、サブエージェント統合"
+    provider: claude
+    model: opus
+    config_file: agents/architect.yml
+
+  spec_writer:
+    description: "仕様詳細化担当 - 基本設計から詳細仕様を作成、Human確認"
+    provider: claude
+    model: opus  # 仕様品質がプロジェクト全体に影響するため、最高精度のモデル
+    config_file: agents/spec-writer.yml
+
+  implementer:
+    description: "実装担当 - 詳細仕様に基づくTDD実装（仕様は作らない）"
+    provider: claude
+    model: sonnet
+    config_file: agents/implementer.yml
+
+  reviewer:
+    description: "レビュー担当 - 客観的レビュー、改善提案"
+    provider: claude
+    model: opus  # 高品質レビューのためOpus
+    config_file: agents/reviewer.yml
+
+  tester:
+    description: "テスト担当 - テスト生成・実行"
+    provider: claude
+    model: sonnet
+    config_file: agents/tester.yml
+
+# =============================================================================
+# サブエージェント定義（並列実行用）
+# =============================================================================
+subagents:
+  description: |
+    大規模タスク（200k+ tokens）では複数のPlanサブエージェントを
+    並列実行することで、より良い結果が得られる。
+    参考: @cloudxdev "Multiple Plan subagents always yields a better result"
+
+  planning:
+    backend_planner:
+      description: "バックエンド設計 - API、サービス層、外部連携"
+      provider: claude
+      model: opus  # 精度重視
+      config_file: agents/subagents/backend-planner.yml
+
+    mobile_planner:
+      description: "モバイル設計 - Flutter、UI/UX、オンデバイス処理"
+      provider: claude
+      model: opus  # 精度重視
+      config_file: agents/subagents/mobile-planner.yml
+
+    infra_planner:
+      description: "インフラ設計 - Docker、CI/CD、クラウド"
+      provider: claude
+      model: opus  # 精度重視
+      config_file: agents/subagents/infra-planner.yml
+
+  execution_mode: parallel
+  aggregator: architect  # Architect (Opus) がサブエージェント結果を統合
+
+# =============================================================================
+# ワークフロー定義（参照）
+# =============================================================================
+workflows:
+  feature: workflows/feature.yml
+  bugfix: workflows/bugfix.yml
+  schema_update: workflows/schema-update.yml
+
+# =============================================================================
+# 人間介入ポイント（Human-in-the-loop）
+# =============================================================================
+human_checkpoints:
+  - name: "最終承認"
+    trigger: "PR作成完了時"
+    required: true
+
+  - name: "セキュリティレビュー"
+    trigger: ".security/ への変更"
+    required: true
+
+  - name: "アーキテクチャ決定"
+    trigger: "ADR作成時"
+    required: true
+
+  - name: "例外対応"
+    trigger: "AI間の対立・ループ検出時"
+    required: true
+
+# =============================================================================
+# 長期記憶設定
+# =============================================================================
+memory:
+  directory: memory/
+  types:
+    - project_decisions: "プロジェクトの重要決定"
+    - learned_patterns: "学習したパターン"
+    - error_history: "過去のエラーと解決策"
+
+# =============================================================================
+# グローバル原則（全エージェント共通）
+# =============================================================================
+global_principles:
+  output_preservation:
+    principle: "全てのアウトプットはドキュメントとして保存する"
+    description: |
+      会話内で完結させず、必ずファイルとして保存する。
+      これにより：
+      - 知識が蓄積される
+      - 後から参照できる
+      - 他のセッションでも利用できる
+      - プロジェクトの資産になる
+
+    rules:
+      - "設計・仕様・レビュー結果は必ずMarkdownで保存"
+      - "会話で出力した内容も後からファイルに保存"
+      - "保存先は内容に応じた適切なディレクトリを選択"
+      - "保存されていなければステップ完了とみなさない"
+
+    output_directories:
+      design: "docs/design/"
+      specs: "docs/design/specs/"
+      reviews: "docs/design/reviews/"
+      decisions: "docs/design/decisions/"
+      journal: "docs/journal/"
+      meetings: "docs/journal/meetings/"
+
+  traceability:
+    principle: "全ての判断に根拠と記録を残す"
+    description: |
+      なぜその判断をしたかを明確にし、後から追跡できるようにする。
+
+    rules:
+      - "重要な判断はADRとして記録"
+      - "Human確認の結果は仕様書内に記載"
+      - "レビュー指摘事項と対応を記録"

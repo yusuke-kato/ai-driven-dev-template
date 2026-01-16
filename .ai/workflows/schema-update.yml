@@ -1,0 +1,114 @@
+# Schema Update Workflow
+# API Schema更新ワークフロー
+
+name: schema-update
+description: "OpenAPI Schema更新と全アプリへの反映ワークフロー"
+
+trigger:
+  - "packages/schema/ への変更"
+  - "API変更要求"
+
+steps:
+  - id: 1
+    name: "Schema変更設計"
+    agent: architect
+    action: |
+      - API変更の設計
+      - 破壊的変更の有無確認
+      - 影響を受けるアプリの特定
+    output:
+      - Schema変更仕様
+      - 影響分析
+    next: 2
+
+  - id: 2
+    name: "Schema変更レビュー"
+    agent: reviewer
+    action: |
+      - Schema変更のレビュー
+      - 後方互換性の確認
+    output:
+      - レビューコメント
+    decision:
+      approved: 3
+      rejected: 1
+
+  - id: 3
+    name: "Schema更新"
+    agent: implementer
+    action: |
+      - packages/schema/ を更新
+      - 型定義の自動生成
+    output:
+      - 更新されたSchema
+      - 生成された型定義
+    next: 4
+
+  - id: 4
+    name: "Server側更新"
+    agent: implementer
+    context: apps/server/
+    action: |
+      - APIエンドポイント更新
+      - テスト更新
+    output:
+      - Server側コード
+    next: 5
+
+  - id: 5
+    name: "Mobile側更新"
+    agent: implementer
+    context: apps/mobile/
+    action: |
+      - API呼び出し更新
+      - テスト更新
+    output:
+      - Mobile側コード
+    next: 6
+
+  - id: 6
+    name: "Admin側更新"
+    agent: implementer
+    context: apps/admin/
+    action: |
+      - API呼び出し更新
+      - テスト更新
+    output:
+      - Admin側コード
+    next: 7
+
+  - id: 7
+    name: "全体テスト"
+    agent: tester
+    action: |
+      - 全アプリのテスト実行
+      - E2Eテスト実行
+    output:
+      - テスト結果
+    decision:
+      passed: 8
+      failed: 4  # 修正に戻る
+
+  - id: 8
+    name: "統合レビュー"
+    agent: reviewer
+    action: |
+      - 全体の整合性確認
+      - 最終レビュー
+    output:
+      - レビューコメント
+    decision:
+      approved: 9
+      rejected: 4
+
+  - id: 9
+    name: "PR作成・人間承認"
+    agent: human
+    action: |
+      - Atomic PRの確認
+      - 承認
+    output:
+      - 承認/却下
+    decision:
+      approved: "DONE"
+      feedback: 4

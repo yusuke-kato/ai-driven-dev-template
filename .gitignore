@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.local.json
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+
+# Security (never commit)
+.security/secrets/
+*.pem
+*.key
+
+# AI workflow state (project-specific, not template)
+# .ai/workflow-state.yml  # Uncomment after first use
+
+# AI memory (project-specific)
+.ai/memory/
+
+# AI metrics (project-specific)
+.ai/metrics/
+
+# Claude settings (user-specific)
+.claude/settings.local.json
+
+# Generated files
+*.generated.*
+
+# OS files
+Thumbs.db

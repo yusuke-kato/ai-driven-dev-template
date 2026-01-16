@@ -1,0 +1,33 @@
+# Workflow State Template
+# ワークフロー開始時にこのテンプレートをコピーして .ai/workflow-state.yml を作成
+
+workflow: ""  # feature, bugfix, schema
+current_step: 1
+started_at: ""  # ISO 8601形式: 2026-01-11T18:00:00+09:00
+task_name: ""  # タスク名（例: ユーザー認証機能）
+
+# 完了したステップの記録
+steps_completed: []
+  # - step: 1
+  #   name: "並列設計"
+  #   completed_at: ""
+  #   outputs:
+  #     - docs/design/xxx.md
+  #   decision: null  # approved, rejected（レビューステップの場合）
+
+# Human確認の記録（Spec Writerが使用）
+human_confirmations: []
+  # - step: 2
+  #   question: "質問内容"
+  #   answer: "回答"
+  #   confirmed_at: ""
+
+# 差し戻し履歴
+backtrack_history: []
+  # - from_step: 3
+  #   to_step: 2
+  #   reason: "仕様が不明確だったため"
+  #   timestamp: ""
+
+# メモ・コンテキスト
+notes: ""
