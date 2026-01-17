@@ -180,7 +180,11 @@ project/
 │   │   ├── inputs/                # インプット資料（会議議事録等）
 │   │   ├── vision.md              # ビジョン・目標
 │   │   ├── user-stories/          # ユーザーストーリー
-│   │   └── features/              # 機能要件
+│   │   ├── features/              # 機能要件
+│   │   └── change-requests/       # スコープ変更リクエスト
+│   ├── planning/                  # 📊 計画（並行開発時）
+│   │   ├── backlog.md             # 機能バックログ
+│   │   └── integration-plan.md    # 統合計画
 │   ├── adr/                       # Architecture Decision Records
 │   ├── design/                    # 基本設計書
 │   │   ├── specs/                 # 📝 詳細仕様書
@@ -189,7 +193,8 @@ project/
 │   ├── journal/
 │   │   ├── human/                 # 人間の監督ログ
 │   │   └── ai/                    # AI自動生成ログ
-│   └── understanding/             # 人間向け解説書
+│   ├── understanding/             # 人間向け解説書
+│   └── tech-debt/                 # 技術的負債の記録
 │
 ├── infra/                         # Terraform, Docker
 ├── e2e/                           # E2Eテスト
@@ -574,6 +579,110 @@ steps:
 - `frontend-planner.yml`（Webフロントエンド）
 - `ml-planner.yml`（機械学習）
 - `security-planner.yml`（セキュリティ）
+
+### 4. 複数機能の並行開発
+
+複数のfeatureを同時進行する場合のガイダンスです。
+
+#### なぜテンプレートで厳密に定義しないか
+
+- 実際のプロジェクト管理はJira / Linear / GitHub Projects等で行うことが多い
+- チーム構成・開発スタイル（スプリント/カンバン）によって最適解が異なる
+- テンプレートとしては「考え方」と「最低限の記録場所」を提供
+
+#### 並行開発時のルール
+
+1. **依存関係の明示**: 各feature開始時に `docs/planning/backlog.md` に依存関係を記載
+2. **統合ポイント**: mainへのマージ順序を `docs/planning/integration-plan.md` に記載
+3. **競合回避**: 同一ファイルを変更する場合は先にマージする側を事前決定
+
+#### 計画用ディレクトリ
+
+```
+docs/planning/
+├── backlog.md           # 機能バックログ（優先度・依存関係）
+└── integration-plan.md  # 統合計画（マージ順序）
+```
+
+**backlog.md の例**:
+
+```markdown
+| 機能 | 優先度 | 依存 | ステータス | 担当 |
+|------|--------|------|-----------|------|
+| ユーザー認証 | Must | - | Step 4 | - |
+| 決済機能 | Must | ユーザー認証 | Step 2 | - |
+| プロフィール編集 | Should | ユーザー認証 | 未着手 | - |
+```
+
+### 5. リリース/デプロイワークフロー
+
+本テンプレートには**リリース/デプロイワークフローは含まれていません**。
+
+デプロイ手順は環境に強く依存するため、プロジェクトに応じて `.ai/workflows/release.yml` を追加してください。
+
+```yaml
+# .ai/workflows/release.yml（例）
+name: release
+description: "リリースワークフロー"
+
+steps:
+  - id: 1
+    name: "リリース準備"
+    action: "リリースノート作成、バージョンタグ"
+  - id: 2
+    name: "デプロイ"
+    action: "【環境に応じて定義】"
+    # 例: ecspresso deploy, kubectl apply, vercel --prod
+  - id: 3
+    name: "動作確認"
+    action: "【環境に応じて定義】"
+```
+
+### 6. スコープ変更（Change Request）
+
+開発中に要件変更が発生した場合、`docs/requirements/change-requests/` に記録します。
+
+```
+docs/requirements/change-requests/
+├── CR-001-決済方法追加.md
+└── CR-002-通知機能スコープ縮小.md
+```
+
+テンプレート: `.ai/templates/change-request-template.md`
+
+**なぜ記録が必要か**:
+- 変更履歴の追跡（なぜスコープが変わったか）
+- 影響範囲の明確化（どの仕様・実装に影響するか）
+- 承認プロセスの証跡
+
+### 7. 技術的負債の管理
+
+意図的に残した技術的負債は `docs/tech-debt/` に記録します。
+
+```
+docs/tech-debt/
+├── TD-001-認証処理のリファクタリング.md
+└── TD-002-レガシーAPI互換コード.md
+```
+
+テンプレート: `.ai/templates/tech-debt-template.md`
+
+**記録する内容**:
+- 何を妥協したか
+- なぜ負債として残したか
+- 返済計画（いつ、どう修正するか）
+
+### 8. その他のカスタマイズ
+
+プロジェクトに応じて以下を追加してください：
+
+| 必要な場合 | 追加するもの |
+|-----------|-------------|
+| UAT（ユーザー受け入れテスト） | `feature.yml` に Step 6.5 として追加 |
+| リスク管理 | `docs/planning/risks.md` |
+| APIドキュメント | `docs/api/`（OpenAPIから自動生成推奨） |
+| ユーザーガイド | `docs/guides/` |
+| 運用マニュアル | `docs/operations/` |
 
 ---
 

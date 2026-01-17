@@ -9,6 +9,21 @@ trigger:
   - "バグ報告"
 
 steps:
+  - id: 0
+    name: "要件・仕様との紐付け"
+    agent: architect
+    description: |
+      バグがどの要件・仕様に関連するかを特定する。
+      トレーサビリティを確保し、再発防止に繋げる。
+    action: |
+      - バグが影響する要件を特定（docs/requirements/）
+      - 関連する詳細仕様を特定（docs/design/specs/）
+      - 仕様の不備が原因か、実装の不備が原因かを判断
+    output:
+      - 関連要件・仕様へのリンク
+      - 原因区分（仕様不備 / 実装不備 / 想定外ケース）
+    next: 1
+
   - id: 1
     name: "バグ分析"
     agent: architect
