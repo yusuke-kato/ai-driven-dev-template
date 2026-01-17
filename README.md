@@ -12,6 +12,7 @@
 - [パラダイム：人間とAIの役割分担](#-パラダイム人間とaiの役割分担)
 - [ディレクトリ構成](#-ディレクトリ構成)
 - [ワークフロー管理](#-ワークフロー管理)
+- [要件定義の進め方](#-要件定義の進め方)
 - [仕様の書き方](#-仕様の書き方)
 - [推奨MCP（Model Context Protocol）](#-推奨mcpmodel-context-protocol)
 - [コマンド一覧](#-コマンド一覧)
@@ -213,6 +214,12 @@ task_name: "ユーザー認証機能"
 
 # 完了したステップの記録
 steps_completed:
+  - step: 0
+    name: "要件定義"
+    completed_at: "2026-01-11T18:00:00+09:00"
+    outputs:
+      - docs/requirements/vision.md
+      - docs/requirements/user-stories/auth-story.md
   - step: 1
     name: "並列設計"
     completed_at: "2026-01-11T18:30:00+09:00"
@@ -222,6 +229,10 @@ steps_completed:
 
 # Human確認の記録（重要！）
 human_confirmations:
+  - step: 0
+    question: "MVP機能のスコープは？"
+    answer: "ログイン・ログアウトのみ、パスワードリセットは後回し"
+    confirmed_at: "2026-01-11T18:00:00+09:00"
   - step: 2
     question: "認証方式はJWTとセッション、どちらを採用しますか？"
     answer: "JWT（スケーラビリティを重視）"
@@ -238,6 +249,11 @@ backtrack_history:
 ### Feature開発ワークフロー
 
 ```
+Step 0: 要件定義（Requirements Analyst）
+    │   Humanの原体験・ビジョンを構造化
+    │   ユーザーストーリー作成、優先度付け（Human決定）
+    │   ⚠️ AIは推測で要件を追加しない
+    ↓
 Step 1: 並列設計（Plan Subagents）
     │   Backend / Mobile / Infra の3つのサブエージェントが並列で設計
     │   Architectが統合、タスクリスト作成
