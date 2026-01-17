@@ -1,6 +1,7 @@
 # 🤖 AI-Driven Development Template
 
-**2026年のAI駆動開発パラダイム**を実践するためのプロジェクトテンプレート。
+**2026年のAI駆動開発パラダイム**を実践するためのプロジェクトテンプレート。  
+License: **MIT**
 
 人間は**オーケストレーター/監督**、AIは**実行者（設計・実装・レビュー・テスト）**として役割分担し、高品質なソフトウェアを効率的に開発します。
 
@@ -25,7 +26,8 @@
 ### 1. テンプレートをコピー
 
 ```bash
-# GitHubの "Use this template" ボタンを使うか、手動でクローン
+# 推奨: GitHubの "Use this template" ボタンを使う
+# もしくは手動でクローン
 git clone https://github.com/yusuke-kato/ai-driven-dev-template.git my-project
 cd my-project
 rm -rf .git
@@ -110,6 +112,8 @@ Implementer（TDD実装）                    ← Step 4
     ↓ apps/*/src/, tests/
 Tester（テスト実行・品質検証）             ← Step 6
 ```
+
+※Step 3（設計レビュー）、Step 5（コードレビュー）は別途定義
 
 > **重要**: 「設計」と「仕様」の違い
 > - **基本設計（Architect）**: 全体構造、API設計、タスク分解 → 「何を作るか」
@@ -692,7 +696,7 @@ docs/tech-debt/
 
 - [2025年のAI開発で学んだことを全部活かして、2026年の「AI駆動開発」を設計した話](https://note.com/yusuke_kato8410/n/n52e998c58555) - パラダイムの設計思想
 - [2026年の開発流儀：AIで「実装→レビュー→修正→統合」のループを回す仕組みができた](https://note.com/yusuke_kato8410/n/ne8928eda3e66) - 実践編
-- **AI駆動開発テンプレートを公開します** - このテンプレートの詳細解説（公開後追記）
+- [AI駆動開発テンプレートを公開します](https://note.com/yusuke_kato8410/n/n05f77214c7eb) - このテンプレートの詳細解説
 
 ### ドキュメント
 
