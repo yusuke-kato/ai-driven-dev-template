@@ -78,27 +78,48 @@ claude
 │  │ 「なぜ作るか」│ 最終判断     │ AI間の調停            │ │
 │  └─────────────┴──────────────┴───────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
-                           ↓ 指示
+                           ↓ ビジョン・要件
 ┌─────────────────────────────────────────────────────────┐
 │                    AI Agents (実行者)                    │
 │                                                          │
 │  ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌───────┐│
-│  │Architect │ → │Spec      │ → │Implement │ → │Tester ││
-│  │(設計)    │   │Writer    │   │er(実装)  │   │       ││
-│  │          │   │(仕様詳細)│   │          │   │       ││
+│  │Require-  │ → │Architect │ → │Spec      │ → │Imple- ││
+│  │ments     │   │(基本設計)│   │Writer    │   │menter ││
+│  │Analyst   │   │          │   │(詳細仕様)│   │       ││
 │  └──────────┘   └──────────┘   └──────────┘   └───────┘│
-│        ↑                           ↑                     │
-│        └───────── Reviewer ────────┘                     │
-│                  (レビュー)                               │
+│        ↑               ↑             ↑            ↑     │
+│        └───────────────┴─── Reviewer ┴────────────┘     │
+│                          (レビュー)                      │
 └─────────────────────────────────────────────────────────┘
 ```
+
+### 開発フローの全体像
+
+```
+Human（ビジョン・原体験）
+    ↓
+Requirements Analyst（要件整理・構造化）  ← Step 0
+    ↓ docs/requirements/
+Architect（基本設計・タスク分解）          ← Step 1
+    ↓ docs/design/
+Spec Writer（詳細仕様・テストケース）      ← Step 2
+    ↓ docs/design/specs/
+Implementer（TDD実装）                    ← Step 4
+    ↓ apps/*/src/, tests/
+Tester（テスト実行・品質検証）             ← Step 6
+```
+
+> **重要**: 「設計」と「仕様」の違い
+> - **基本設計（Architect）**: 全体構造、API設計、タスク分解 → 「何を作るか」
+> - **詳細仕様（Spec Writer）**: 入出力定義、エッジケース、テストケース → 「どう作るか」
 
 ### エージェントの役割
 
 | エージェント | モデル | 責務 |
 |--------------|--------|------|
-| **Architect** | Opus | 全体設計、タスク分解、ADR作成 |
-| **Spec Writer** | Opus | 詳細仕様作成、Human確認 |
+| **Requirements Analyst** | Opus | 要件整理・構造化、ユーザーストーリー作成（Human主体） |
+| **Architect** | Opus | **基本設計**、タスク分解、ADR作成 |
+| **Spec Writer** | Opus | **詳細仕様**作成、Human確認、テストケース定義 |
 | **Implementer** | Sonnet | TDD実装（仕様に従う、作らない） |
 | **Reviewer** | Opus | 設計・コードレビュー、暴走防止 |
 | **Tester** | Sonnet | テスト生成・実行、カバレッジ報告 |
@@ -152,8 +173,12 @@ project/
 │   └── shared/                    # 共有ユーティリティ
 │
 ├── docs/
+│   ├── requirements/              # 📋 要件定義
+│   │   ├── vision.md              # ビジョン・目標
+│   │   ├── user-stories/          # ユーザーストーリー
+│   │   └── features/              # 機能要件
 │   ├── adr/                       # Architecture Decision Records
-│   ├── design/                    # 設計書
+│   ├── design/                    # 基本設計書
 │   │   ├── specs/                 # 📝 詳細仕様書
 │   │   ├── reviews/               # レビュー結果
 │   │   └── decisions/             # 設計判断

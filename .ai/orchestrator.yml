@@ -21,6 +21,13 @@ paradigm:
 # エージェント定義
 # =============================================================================
 agents:
+  requirements_analyst:
+    description: "要件定義担当 - Humanの原体験を構造化、ユーザーストーリー作成（Human主体）"
+    provider: claude
+    model: opus  # 要件の品質がプロジェクト全体に影響するため、最高精度のモデル
+    config_file: agents/requirements-analyst.yml
+    mode: human_led  # Human主体、AI補助
+
   architect:
     description: "設計担当 - 全体アーキテクチャ、タスク分解、サブエージェント統合"
     provider: claude
@@ -141,6 +148,7 @@ global_principles:
       - "保存されていなければステップ完了とみなさない"
 
     output_directories:
+      requirements: "docs/requirements/"
       design: "docs/design/"
       specs: "docs/design/specs/"
       reviews: "docs/design/reviews/"
