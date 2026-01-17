@@ -135,9 +135,10 @@ project/
 │   ├── orchestrator.yml           # AI間の役割・ワークフロー定義
 │   ├── workflow-state.yml         # 現在のワークフロー状態（自動生成）
 │   ├── agents/
-│   │   ├── architect.yml          # 設計担当
-│   │   ├── spec-writer.yml        # 仕様詳細化担当
-│   │   ├── implementer.yml        # 実装担当
+│   │   ├── requirements-analyst.yml  # 要件定義担当（Human主体）
+│   │   ├── architect.yml          # 基本設計担当
+│   │   ├── spec-writer.yml        # 詳細仕様担当
+│   │   ├── implementer.yml        # TDD実装担当
 │   │   ├── reviewer.yml           # レビュー担当
 │   │   ├── tester.yml             # テスト担当
 │   │   └── subagents/             # 並列サブエージェント
